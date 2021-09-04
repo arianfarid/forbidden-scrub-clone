@@ -6,7 +6,7 @@
     </div>
 </template>
 <script>
-import { provide, reactive } from 'vue';
+import { onBeforeMount, provide, reactive } from 'vue';
 import GameBoard from "@/components/GameBoard.vue";
 import HeaderComponent from "@/components/HeaderComponent.vue";
 import SideWindow from "@/components/SideWindow.vue";
@@ -18,109 +18,28 @@ export default {
         SideWindow,
     },
     setup() {
-        const tiles = reactive([{
-                'text': 'Tile',
-                'id': 1
-            },
+        const createTiles = (tile_set, num) => {
+          //take empty array, start from zero for first tile, once 25 tiles are made, return tile array
+          if (num===25) return tile_set;
+          tile_set.push(
             {
-                'text': 'Tile',
-                'id': 2
-            },
-            {
-                'text': 'Tile',
-                'id': 3
-            },
-            {
-                'text': 'Tile',
-                'id': 4
-            },
-            {
-                'text': 'Tile',
-                'id': 5
-            },
-            {
-                'text': 'Tile',
-                'id': 6
-            },
-            {
-                'text': 'Tile',
-                'id': 7
-            },
-            {
-                'text': 'Tile',
-                'id': 8
-            },
-            {
-                'text': 'Tile',
-                'id': 9
-            },
-            {
-                'text': 'Tile',
-                'id': 10
-            },
-            {
-                'text': 'Tile',
-                'id': 11
-            },
-            {
-                'text': 'Tile',
-                'id': 12
-            },
-            {
-                'text': 'Vortex',
-                'id': 13
-            },
-            {
-                'text': 'Tile',
-                'id': 14
-            },
-            {
-                'text': 'Tile',
-                'id': 15
-            },
-            {
-                'text': 'Tile',
-                'id': 16
-            },
-            {
-                'text': 'Tile',
-                'id': 17
-            },
-            {
-                'text': 'Tile',
-                'id': 18
-            },
-            {
-                'text': 'Tile',
-                'id': 19
-            },
-            {
-                'text': 'Tile',
-                'id': 20
-            },
-            {
-                'text': 'Tile',
-                'id': 21
-            },
-            {
-                'text': 'Tile',
-                'id': 22
-            },
-            {
-                'text': 'Tile',
-                'id': 23
-            },
-            {
-                'text': 'Tile',
-                'id': 24
-            },
-            {
-                'text': 'Tile',
-                'id': 25
-            },
-        ]);
+              'id': num + 1,
+              'text': "Tile",
+              'crash_site': false,
+            });
+          return createTiles(tile_set, num+1);
+        }
+        const tiles = reactive(createTiles([], 0));
         provide('tiles', tiles);
-
+        const createCrashSite = () => {
+          //create a rand integer from 0 to 24
+          let index = Math.floor(Math.random() * 25);
+          if (index === 12) {
+            return createCrashSite()
+          } else {
+            return index
+          }
+        }
         const moveVortex = (direction) => {
           console.log(direction);
           let vortex_position = tiles.findIndex((tile) => {
@@ -141,8 +60,14 @@ export default {
           }
 
         };
-
         provide('moveVortex', moveVortex);
+
+
+        onBeforeMount(()=>{
+          //create crash site
+          tiles[createCrashSite()].crash_site = true;
+          tiles[12].text = 'Vortex'
+        });
         return {
             tiles, moveVortex,
         }

@@ -3,7 +3,7 @@
     justify-items-center gap-3 p-4
     bg-gradient-to-r from-yellow-100 to-yellow-300">
         <div v-for="tile in tiles" v-bind:key="tile.id">
-            <game-tile v-bind:tile_type="tile.text"></game-tile>
+            <game-tile v-bind:tile_type="tile.text" v-bind:crash_site="tile.crash_site"></game-tile>
         </div>
     </div>
 </template>
