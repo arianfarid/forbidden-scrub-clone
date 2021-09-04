@@ -26,6 +26,7 @@ export default {
               'id': num + 1,
               'text': "Tile",
               'crash_site': false,
+              'sand_count': 0,
             });
           return createTiles(tile_set, num+1);
         }
@@ -40,22 +41,32 @@ export default {
             return index
           }
         }
+        const addSandToTile = (tile) => {
+          tile.sand_count = tile.sand_count + 1;
+        }
+        provide('addSandToTile', addSandToTile);
         const moveVortex = (direction) => {
           console.log(direction);
+          
           let vortex_position = tiles.findIndex((tile) => {
             return tile.text === 'Vortex'
           });
+
           if(direction === 'left' && !([0,5,10,15,20].includes(vortex_position))){
+            addSandToTile(tiles[vortex_position-1]);
             [tiles[vortex_position], tiles[vortex_position-1]] = [tiles[vortex_position-1], tiles[vortex_position]]
           }
           if(direction === 'right' && !([4,9,14,19,24].includes(vortex_position))){
+            addSandToTile(tiles[vortex_position+1]);
             [tiles[vortex_position], tiles[vortex_position+1]] = [tiles[vortex_position+1], tiles[vortex_position]]
           }
 
           if(direction === 'up' && !([0,1,2,3,4].includes(vortex_position))){
+            addSandToTile(tiles[vortex_position-5]);
             [tiles[vortex_position], tiles[vortex_position-5]] = [tiles[vortex_position-5], tiles[vortex_position]]
           }
           if(direction === 'down' && !([20,21,22,23,24].includes(vortex_position))){
+            addSandToTile(tiles[vortex_position+5]);
             [tiles[vortex_position], tiles[vortex_position+5]] = [tiles[vortex_position+5], tiles[vortex_position]]
           }
 
@@ -64,9 +75,11 @@ export default {
 
 
         onBeforeMount(()=>{
-          //create crash site
+          //initialize board properties
           tiles[createCrashSite()].crash_site = true;
-          tiles[12].text = 'Vortex'
+          tiles[12].text = 'Vortex';
+          //setup initial sand on board
+          [2,6,8,10,14,16,18,22].forEach(tile_number=>addSandToTile(tiles[tile_number]));
         });
         return {
             tiles, moveVortex,
