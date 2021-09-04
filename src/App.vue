@@ -6,7 +6,7 @@
     </div>
 </template>
 <script>
-// import {ref} from 'vue';
+import {provide, reactive} from 'vue';
 import GameBoard from "@/components/GameBoard.vue";
 import HeaderComponent from "@/components/HeaderComponent.vue";
 import SideWindow from "@/components/SideWindow.vue";
@@ -18,9 +18,36 @@ export default {
         SideWindow,
     },
     setup() {
-
+        const tiles = reactive([
+            { 'text': 'Tile' },
+            { 'text': 'Tile' },
+            { 'text': 'Tile' },
+            { 'text': 'Tile' },
+            { 'text': 'Tile' },
+            { 'text': 'Tile' },
+            { 'text': 'Tile' },
+            { 'text': 'Tile' },
+            { 'text': 'Tile' },
+            { 'text': 'Tile' },
+            { 'text': 'Tile' },
+            { 'text': 'Tile' },
+            { 'text': 'Tile' },
+            { 'text': 'Vortex' },
+            { 'text': 'Tile' },
+            { 'text': 'Tile' },
+            { 'text': 'Tile' },
+            { 'text': 'Tile' },
+            { 'text': 'Tile' },
+            { 'text': 'Tile' },
+            { 'text': 'Tile' },
+            { 'text': 'Tile' },
+            { 'text': 'Tile' },
+            { 'text': 'Tile' },
+            { 'text': 'Tile' },
+        ]);
+        provide('tiles', tiles);
         return {
-
+          tiles,
         }
     }
 };
