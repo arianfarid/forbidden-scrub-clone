@@ -1,7 +1,7 @@
 <template>
     <header-component></header-component>
     <div v-if="game_creating">
-      Choose characters
+      <game-set-up></game-set-up>
     </div>
     <div v-if="game_started" class="grid grid-cols-6 grid-rows-1">
         <side-window class="col-span-1"></side-window>
@@ -11,12 +11,14 @@
 <script>
 import { onBeforeMount, provide, reactive } from 'vue';
 import GameBoard from "@/components/GameBoard.vue";
+import GameSetUp from "@/components/GameSetUp.vue"
 import HeaderComponent from "@/components/HeaderComponent.vue";
 import SideWindow from "@/components/SideWindow.vue";
 
 export default {
     components: {
         GameBoard,
+        GameSetUp,
         HeaderComponent,
         SideWindow,
     },
