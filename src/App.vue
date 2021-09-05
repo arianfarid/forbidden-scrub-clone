@@ -1,6 +1,9 @@
 <template>
     <header-component></header-component>
-    <div class="grid grid-cols-6 grid-rows-1">
+    <div v-if="game_creating">
+      Choose characters
+    </div>
+    <div v-if="game_started" class="grid grid-cols-6 grid-rows-1">
         <side-window class="col-span-1"></side-window>
         <game-board class="col-span-5"></game-board>
     </div>
@@ -18,6 +21,8 @@ export default {
         SideWindow,
     },
     setup() {
+        const game_started = false;
+        const game_creating = true;
         const createTiles = (tile_set, num) => {
           //take empty array, start from zero for first tile, once 25 tiles are made, return tile array
           if (num===25) return tile_set;
@@ -82,7 +87,7 @@ export default {
           [2,6,8,10,14,16,18,22].forEach(tile_number=>addSandToTile(tiles[tile_number]));
         });
         return {
-            tiles, moveVortex,
+            game_creating, game_started, moveVortex, tiles,
         }
     }
 };

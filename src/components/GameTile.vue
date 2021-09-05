@@ -1,19 +1,32 @@
 <template>
-    <div class="grid justify-items-center 
+    <div v-if="!is_vortex" class="grid justify-items-center 
+    hover:ring hover:ring-purple-600
     text-sm
     bg-gradient-to-t from-yellow-500 via-yellow-500 to-blue-300
     p-7 rounded-md shadow-md">
-        <p v-if="!crash_site && !is_vortex">
-            {{tile_type}}
-            <br>
-            {{sand_count}} sand layers
-        </p>
-        <p v-if="is_vortex">
-            ~VORTEX~
-        </p>
-        <p v-if="crash_site">
-            Crash Site
-        </p>
+    
+        <div>
+            <div v-if="sand_count > 0" class="filter sepia flex flex-grow"></div>
+            <p v-if="!crash_site && !is_vortex">
+                {{tile_type}}
+                <br>
+                {{sand_count}} sands
+            </p>
+            <p v-if="crash_site">
+                Crash Site
+            </p>
+
+        </div>
+    </div>
+    <div v-if="is_vortex" class="grid justify-items-center 
+    text-sm
+    bg-opacity-0 
+    p-7 rounded-md ">
+        <div>
+            <p>
+                ~VORTEX~
+            </p>
+        </div>
     </div>
 </template>
 <script>
@@ -25,7 +38,7 @@ export default {
         sand_count: Number,
     },
     setup(props) {
-        const is_vortex = (props.tile_type==='Vortex');
+        const is_vortex = (props.tile_type === 'Vortex');
         return {
             is_vortex
         }
