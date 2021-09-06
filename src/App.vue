@@ -1,7 +1,7 @@
 <template>
     <header-component></header-component>
     <div v-if="game_creating">
-      <game-set-up></game-set-up>
+        <game-set-up></game-set-up>
     </div>
     <div v-if="game_started" class="grid grid-cols-6 grid-rows-1">
         <side-window class="col-span-1"></side-window>
@@ -9,7 +9,7 @@
     </div>
 </template>
 <script>
-import { onBeforeMount, provide, reactive } from 'vue';
+import { onBeforeMount, provide, reactive, ref } from 'vue';
 import GameBoard from "@/components/GameBoard.vue";
 import GameSetUp from "@/components/GameSetUp.vue"
 import HeaderComponent from "@/components/HeaderComponent.vue";
@@ -25,71 +25,130 @@ export default {
     setup() {
         const game_started = false;
         const game_creating = true;
-        const createTiles = (tile_set, num) => {
-          //take empty array, start from zero for first tile, once 25 tiles are made, return tile array
-          if (num===25) return tile_set;
-          tile_set.push(
-            {
-              'id': num + 1,
-              'text': "Tile",
-              'crash_site': false,
-              'sand_count': 0,
+
+        //////////////////
+        // Logic for player data
+        //
+        const player_count = ref();
+        provide('player_count', player_count);
+        const setPlayerCount = (number) => {
+            return player_count.value = number;
+        }
+        provide('setPlayerCount', setPlayerCount);
+        const players = ref([]);
+        provide('players', players);
+        const createPlayers = (players_array, init_players_length, num, init_num = false) => {
+            // players = empty players array
+            // init_players_length = initial length of players array
+            // num is number of players
+            // init numb will be same as num from start of recursion
+            if (!init_num) {
+                init_num = num;
+            }
+            if (init_players_length > 0) {
+                //if user presses same number of players again
+                if (players_array.length === init_num) {
+                    return
+                }
+                //if button pressed is bigger than players already is
+                if (num >= players_array.length) {
+                  players_array.push({
+                      'id': (players_array[players_array.length-1].id +1 ),
+                      'name': '',
+                      'character': '',
+                      'thirst': 0,
+                  });
+                  return createPlayers(players_array, init_players_length, num, init_num);
+                }
+                //if button pressed is smaller than players already is
+                if(num <= players_array.length) {
+                  return players_array.splice(num, players_array.length-num);
+                }
+                return
+            }
+
+            if (num === 0) return players_array;
+            players_array.push({
+                'id': (player_count.value - num + 1),
+                'name': '',
+                'character': '',
+                'thirst': 0,
             });
-          return createTiles(tile_set, num+1);
+            return createPlayers(players_array, init_players_length, num - 1, init_num);
+        };
+        provide('createPlayers', createPlayers);
+
+        //////////////////
+        // Logic for game board 
+        //
+        const createTiles = (tile_set, num) => {
+            //take empty array, start from zero for first tile, once 25 tiles are made, return tile array
+            if (num === 25) return tile_set;
+            tile_set.push({
+                'id': num + 1,
+                'text': "Tile",
+                'crash_site': false,
+                'sand_count': 0,
+            });
+            return createTiles(tile_set, num + 1);
         }
         const tiles = reactive(createTiles([], 0));
         provide('tiles', tiles);
         const createCrashSite = () => {
-          //create a rand integer from 0 to 24
-          let index = Math.floor(Math.random() * 25);
-          if (index === 12) {
-            return createCrashSite()
-          } else {
-            return index
-          }
+            //create a rand integer from 0 to 24
+            let index = Math.floor(Math.random() * 25);
+            if (index === 12) {
+                return createCrashSite()
+            } else {
+                return index
+            }
         }
         const addSandToTile = (tile) => {
-          tile.sand_count = tile.sand_count + 1;
+            tile.sand_count = tile.sand_count + 1;
         }
         provide('addSandToTile', addSandToTile);
         const moveVortex = (direction) => {
-          console.log(direction);
-          
-          let vortex_position = tiles.findIndex((tile) => {
-            return tile.text === 'Vortex'
-          });
+            console.log(direction);
 
-          if(direction === 'left' && !([0,5,10,15,20].includes(vortex_position))){
-            addSandToTile(tiles[vortex_position-1]);
-            [tiles[vortex_position], tiles[vortex_position-1]] = [tiles[vortex_position-1], tiles[vortex_position]]
-          }
-          if(direction === 'right' && !([4,9,14,19,24].includes(vortex_position))){
-            addSandToTile(tiles[vortex_position+1]);
-            [tiles[vortex_position], tiles[vortex_position+1]] = [tiles[vortex_position+1], tiles[vortex_position]]
-          }
+            let vortex_position = tiles.findIndex((tile) => {
+                return tile.text === 'Vortex'
+            });
 
-          if(direction === 'up' && !([0,1,2,3,4].includes(vortex_position))){
-            addSandToTile(tiles[vortex_position-5]);
-            [tiles[vortex_position], tiles[vortex_position-5]] = [tiles[vortex_position-5], tiles[vortex_position]]
-          }
-          if(direction === 'down' && !([20,21,22,23,24].includes(vortex_position))){
-            addSandToTile(tiles[vortex_position+5]);
-            [tiles[vortex_position], tiles[vortex_position+5]] = [tiles[vortex_position+5], tiles[vortex_position]]
-          }
+            if (direction === 'left' && !([0, 5, 10, 15, 20].includes(vortex_position))) {
+                addSandToTile(tiles[vortex_position - 1]);
+                [tiles[vortex_position], tiles[vortex_position - 1]] = [tiles[vortex_position - 1], tiles[vortex_position]]
+            }
+            if (direction === 'right' && !([4, 9, 14, 19, 24].includes(vortex_position))) {
+                addSandToTile(tiles[vortex_position + 1]);
+                [tiles[vortex_position], tiles[vortex_position + 1]] = [tiles[vortex_position + 1], tiles[vortex_position]]
+            }
+
+            if (direction === 'up' && !([0, 1, 2, 3, 4].includes(vortex_position))) {
+                addSandToTile(tiles[vortex_position - 5]);
+                [tiles[vortex_position], tiles[vortex_position - 5]] = [tiles[vortex_position - 5], tiles[vortex_position]]
+            }
+            if (direction === 'down' && !([20, 21, 22, 23, 24].includes(vortex_position))) {
+                addSandToTile(tiles[vortex_position + 5]);
+                [tiles[vortex_position], tiles[vortex_position + 5]] = [tiles[vortex_position + 5], tiles[vortex_position]]
+            }
 
         };
         provide('moveVortex', moveVortex);
 
 
-        onBeforeMount(()=>{
-          //initialize board properties
-          tiles[createCrashSite()].crash_site = true;
-          tiles[12].text = 'Vortex';
-          //setup initial sand on board
-          [2,6,8,10,14,16,18,22].forEach(tile_number=>addSandToTile(tiles[tile_number]));
+        onBeforeMount(() => {
+            //initialize board properties
+            tiles[createCrashSite()].crash_site = true;
+            tiles[12].text = 'Vortex';
+            //setup initial sand on board
+            [2, 6, 8, 10, 14, 16, 18, 22].forEach(tile_number => addSandToTile(tiles[tile_number]));
         });
         return {
-            game_creating, game_started, moveVortex, tiles,
+            game_creating,
+            game_started,
+            moveVortex,
+            player_count,
+            tiles,
         }
     }
 };
