@@ -10,13 +10,19 @@
             </div>
         </div>
     </div>
-
-    {{ players }}
+    <div class="flex flex-wrap">
+        <div v-for="player in players" v-bind:key="player.id">
+            <game-player-card v-bind:player_data="player"></game-player-card>
+        </div>
+    </div>
 </template>
 <script>
-import {inject} from 'vue'
+import { inject } from 'vue';
+import GamePlayerCard from '@/components/GamePlayerCard.vue';
 export default {
-    components: {},
+    components: {
+        GamePlayerCard
+    },
     props: {
 
     },
@@ -26,7 +32,10 @@ export default {
         const createPlayers = inject('createPlayers');
         const players = inject('players');
         return {
-            createPlayers, player_count, players, setPlayerCount
+            createPlayers,
+            player_count,
+            players,
+            setPlayerCount
         }
     }
 };
