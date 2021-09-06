@@ -6,8 +6,8 @@ module.exports = {
   },
   variants: {
     extend: {
-      ringWidth: ['hover', 'active'],
-      ringColor: ['hover', 'active'],
+      ringWidth: ['hover', 'active', 'focus'],
+      ringColor: ['hover', 'active', 'focus'],
     },
   },
   plugins: [],
