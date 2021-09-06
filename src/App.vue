@@ -56,6 +56,7 @@ export default {
                       'id': (players_array[players_array.length-1].id +1 ),
                       'name': '',
                       'character': '',
+                      'character_id': '',
                       'thirst': 0,
                   });
                   return createPlayers(players_array, init_players_length, num, init_num);
@@ -72,11 +73,21 @@ export default {
                 'id': (player_count.value - num + 1),
                 'name': '',
                 'character': '',
+                'character_id': '',
                 'thirst': 0,
             });
             return createPlayers(players_array, init_players_length, num - 1, init_num);
         };
         provide('createPlayers', createPlayers);
+        const characters = ref([
+          {'id':1, 'name':'Gopher Frog', 'img': '/img/gopher_frog.png'},
+          {'id':2, 'name':'Gopher Tortoise', 'img': '/img/gopher_tortoise.png'},
+          {'id':3, 'name':'Sand Skink', 'img': '/img/sand_skink.jpeg'},
+          {'id':4, 'name':'Scrub Lizard', 'img': '/img/scrub_lizard.png'},
+          {'id':5, 'name':'Scrub Jay', 'img': '/img/scrub_jay.png'},
+          
+        ]);
+        provide('characters', characters);
 
         //////////////////
         // Logic for game board 

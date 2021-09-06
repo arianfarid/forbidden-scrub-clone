@@ -35,9 +35,9 @@ export default {
         const createPlayers = inject('createPlayers');
         const players = inject('players');
         const updatePlayerData = (event) => {
-            console.log(event.id);
             players.value[event.id - 1].name = event.name;
-
+            players.value[event.id - 1].character = event.character;
+            players.value[event.id - 1].character_id = event.character_id;
             return
         }
         return {
