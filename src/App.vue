@@ -23,8 +23,16 @@ export default {
         SideWindow,
     },
     setup() {
-        const game_started = false;
-        const game_creating = true;
+        //////////////////
+        // Game States
+        //
+        const game_creating = ref(true);
+        const game_started = ref(false);
+        const gameStart = () => {
+            game_creating.value = false;
+            game_started.value = true;
+        }
+        provide('gameStart', gameStart);
 
         //////////////////
         // Logic for player data
@@ -52,18 +60,18 @@ export default {
                 }
                 //if button pressed is bigger than players already is
                 if (num >= players_array.length) {
-                  players_array.push({
-                      'id': (players_array[players_array.length-1].id +1 ),
-                      'name': '',
-                      'character': '',
-                      'character_id': '',
-                      'thirst': 0,
-                  });
-                  return createPlayers(players_array, init_players_length, num, init_num);
+                    players_array.push({
+                        'id': (players_array[players_array.length - 1].id + 1),
+                        'name': '',
+                        'character': '',
+                        'character_id': '',
+                        'thirst': 0,
+                    });
+                    return createPlayers(players_array, init_players_length, num, init_num);
                 }
                 //if button pressed is smaller than players already is
-                if(num <= players_array.length) {
-                  return players_array.splice(num, players_array.length-num);
+                if (num <= players_array.length) {
+                    return players_array.splice(num, players_array.length - num);
                 }
                 return
             }
@@ -80,12 +88,12 @@ export default {
         };
         provide('createPlayers', createPlayers);
         const characters = ref([
-          {'id':1, 'name':'Gopher Frog', 'img': '/img/gopher_frog.png'},
-          {'id':2, 'name':'Gopher Tortoise', 'img': '/img/gopher_tortoise.png'},
-          {'id':3, 'name':'Sand Skink', 'img': '/img/sand_skink.jpeg'},
-          {'id':4, 'name':'Scrub Lizard', 'img': '/img/scrub_lizard.png'},
-          {'id':5, 'name':'Scrub Jay', 'img': '/img/scrub_jay.png'},
-          
+            { 'id': 1, 'name': 'Gopher Frog', 'img': '/img/gopher_frog.png' },
+            { 'id': 2, 'name': 'Gopher Tortoise', 'img': '/img/gopher_tortoise.png' },
+            { 'id': 3, 'name': 'Sand Skink', 'img': '/img/sand_skink.jpeg' },
+            { 'id': 4, 'name': 'Scrub Lizard', 'img': '/img/scrub_lizard.png' },
+            { 'id': 5, 'name': 'Scrub Jay', 'img': '/img/scrub_jay.png' },
+
         ]);
         provide('characters', characters);
 
@@ -157,6 +165,7 @@ export default {
         return {
             game_creating,
             game_started,
+            gameStart,
             moveVortex,
             player_count,
             tiles,

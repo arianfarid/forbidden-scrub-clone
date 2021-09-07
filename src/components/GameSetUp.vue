@@ -11,7 +11,8 @@
                 </div>
             </div>
             <div>
-                <button v-if="game_ready" class="inline-block px-4 py-2 leading-none border rounded text-purple-600 border-purple-600 hover:border-purple-300 hover:text-purple-600 hover:bg-white mt-4 lg:mt-0">
+                <button v-if="game_ready" class="inline-block px-4 py-2 leading-none border rounded text-purple-600 border-purple-600 hover:border-purple-300 hover:text-purple-600 hover:bg-white mt-4 lg:mt-0"
+                @click="gameStart()">
                     Start Game
                 </button>
             </div>
@@ -59,11 +60,10 @@ export default {
             if (players.value.some(element => element.character === '') || players.value.some(element => element.name === '')) {
                 return game_ready.value = false;
             } else {
-                console.log('game ready');
                 return game_ready.value = true;
             }
         }
-
+        const gameStart = inject('gameStart');
         //////////////////
         // update game state when any player 
         // data has been updated
@@ -74,6 +74,7 @@ export default {
         return {
             checkGameReady,
             createPlayers,
+            gameStart,
             game_ready,
             player_count,
             players,
