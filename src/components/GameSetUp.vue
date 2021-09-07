@@ -21,7 +21,6 @@
             <div v-for="player in players" v-bind:key="player.id">
                 <game-player-card v-bind:player_data="player" @player-name-change="updatePlayerName($event)" @player-character-change="updatePlayerCharacter($event)"></game-player-card>
             </div>
-            {{ players }}
         </div>
     </div>
 </template>
