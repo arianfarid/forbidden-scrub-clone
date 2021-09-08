@@ -49,13 +49,16 @@ export default {
         const updatePlayerCharacter = (event) => {
             players.value[event.id - 1].character = event.character;
             players.value[event.id - 1].character_id = event.character_id;
+            players.value[event.id - 1].character_img = event.character_img;
         }
+        // const characters = inject('characters');
 
         //////////////////
         // Game state
         //
         const game_ready = ref(false);
         const checkGameReady = () => {
+            //if the players aren't named or characters picked for each of them, then not ready, otherwise ok.
             if (players.value.some(element => element.character === '') || players.value.some(element => element.name === '')) {
                 return game_ready.value = false;
             } else {
@@ -79,7 +82,7 @@ export default {
             players,
             setPlayerCount,
             updatePlayerCharacter,
-            updatePlayerName
+            updatePlayerName,
         }
     }
 };

@@ -10,7 +10,7 @@
                 </div>
                 <div>
                     <input ref="player_name" type="text" class="rounded-sm 
-                    ring-1 ring-gray-200 hover:ring-purple-300 focus:ring-1 w-32 focus:ring-purple-600 outline-none" v-on:input="updateName()" @change="updateName()">
+                    ring-1 ring-gray-200 hover:ring-purple-300 focus:ring-1 w-32 focus:ring-purple-600 outline-none" v-on:input="updateName()" >
                 </div>
             </div>
         </div>
@@ -19,10 +19,10 @@
                 Character:
             </div>
             <div>
-                <select ref="character_selected" class="rounded-sm 
+                <select ref="character_selected" :value="character_selected.value" class="rounded-sm 
                 ring-1 ring-gray-200 hover:ring-purple-300 focus:ring-1 w-32 focus:ring-purple-600 outline-none" v-on:input="updateCharacter(), addCharacterImage()">
-                    <option></option>
-                    <option v-for="option in characters" v-bind:key="option.id" :value="option.name">{{option.name}}</option>
+                    <option>{{character_selected.value}}</option>
+                    <option v-for="option in usableCharacters" v-bind:key="option.id" :value="option.name">{{option.name}}</option>
                 </select>
             </div>
         </div>
@@ -45,6 +45,7 @@ export default {
         const characters = inject('characters');
         const character_selected = ref('');
         const character_img = ref('');
+        const usableCharacters = inject('usableCharacters');
         const updateName = () => {
             context.emit('playerNameChange', {
                 "id": props.player_data.id,
@@ -70,6 +71,7 @@ export default {
             player_name,
             updateName,
             updateCharacter,
+            usableCharacters,
         }
     }
 };

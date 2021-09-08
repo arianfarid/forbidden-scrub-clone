@@ -9,7 +9,7 @@
     </div>
 </template>
 <script>
-import { onBeforeMount, provide, reactive, ref } from 'vue';
+import { computed, onBeforeMount, provide, reactive, ref } from 'vue';
 import GameBoard from "@/components/GameBoard.vue";
 import GameSetUp from "@/components/GameSetUp.vue"
 import HeaderComponent from "@/components/HeaderComponent.vue";
@@ -31,11 +31,12 @@ export default {
         const gameStart = () => {
             game_creating.value = false;
             game_started.value = true;
+            current_player_index.value = 0;
         }
         provide('gameStart', gameStart);
 
         //////////////////
-        // Logic for player data
+        // Logic for creating player data
         //
         const player_count = ref();
         provide('player_count', player_count);
@@ -65,6 +66,7 @@ export default {
                         'name': '',
                         'character': '',
                         'character_id': '',
+                        'character_img': '',
                         'thirst': 0,
                     });
                     return createPlayers(players_array, init_players_length, num, init_num);
@@ -96,7 +98,33 @@ export default {
 
         ]);
         provide('characters', characters);
+        const usableCharacters = computed(()=>{
+            //filter character
+            //filters character sheet by where the player character id is equal to character id
+            
+            return (characters.value.filter(character => {
+              return !players.value.some(player => {
+                return player.character_id === character.id;
+              });
+            }));
 
+        });
+        provide('usableCharacters', usableCharacters);
+
+        //////////////////
+        // Logic for current player
+        //
+        const current_player_index = ref('');
+        provide('current_player_index', current_player_index);
+        const nextPlayerTurn = () => {
+          if(current_player_index.value === (players.value.length -1)) {
+            return current_player_index.value = 0;
+          } else {
+            current_player_index.value = current_player_index.value + 1;
+            return current_player_index.value;
+          }
+        }
+        provide('nextPlayerTurn', nextPlayerTurn);
         //////////////////
         // Logic for game board 
         //
@@ -163,10 +191,12 @@ export default {
             [2, 6, 8, 10, 14, 16, 18, 22].forEach(tile_number => addSandToTile(tiles[tile_number]));
         });
         return {
+            current_player_index,
             game_creating,
             game_started,
             gameStart,
             moveVortex,
+            nextPlayerTurn,
             player_count,
             tiles,
         }
