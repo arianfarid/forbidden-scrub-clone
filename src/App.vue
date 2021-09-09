@@ -31,6 +31,7 @@ export default {
         const gameStart = () => {
             game_creating.value = false;
             game_started.value = true;
+            setPlayersAtStart(players.value.length);
             current_player_index.value = 0;
         }
         provide('gameStart', gameStart);
@@ -98,31 +99,27 @@ export default {
 
         ]);
         provide('characters', characters);
-        const usableCharacters = computed(()=>{
+        const usableCharacters = computed(() => {
             //filter character
             //filters character sheet by where the player character id is equal to character id
-            
+
             return (characters.value.filter(character => {
-              return !players.value.some(player => {
-                return player.character_id === character.id;
-              });
+                return !players.value.some(player => {
+                    return player.character_id === character.id;
+                });
             }));
 
         });
         provide('usableCharacters', usableCharacters);
-
-        //////////////////
-        // Logic for current player
-        //
         const current_player_index = ref('');
         provide('current_player_index', current_player_index);
         const nextPlayerTurn = () => {
-          if(current_player_index.value === (players.value.length -1)) {
-            return current_player_index.value = 0;
-          } else {
-            current_player_index.value = current_player_index.value + 1;
-            return current_player_index.value;
-          }
+            if (current_player_index.value === (players.value.length - 1)) {
+                return current_player_index.value = 0;
+            } else {
+                current_player_index.value = current_player_index.value + 1;
+                return current_player_index.value;
+            }
         }
         provide('nextPlayerTurn', nextPlayerTurn);
         //////////////////
@@ -136,18 +133,20 @@ export default {
                 'text': "Tile",
                 'crash_site': false,
                 'sand_count': 0,
+                'index': num,
             });
             return createTiles(tile_set, num + 1);
         }
         const tiles = reactive(createTiles([], 0));
         provide('tiles', tiles);
+        const crash_site_index = ref('');
         const createCrashSite = () => {
             //create a rand integer from 0 to 24
             let index = Math.floor(Math.random() * 25);
             if (index === 12) {
                 return createCrashSite()
             } else {
-                return index
+                return crash_site_index.value = index;
             }
         }
         const addSandToTile = (tile) => {
@@ -181,16 +180,39 @@ export default {
 
         };
         provide('moveVortex', moveVortex);
+        const player_positions = ref([]);
+        provide('player_positions', player_positions);
+        const setPlayersAtStart = (num) => {
+            //recursively place all players on start
+            //num = number of players left to iterate
+            if (num === 0) {
+                return
+            }
+            player_positions.value.push(crash_site_index.value);
+            return setPlayersAtStart(num - 1);
 
+        }
+        const advancePlayer = () => {
+            // emit event for this function to catch
+            // check if player has enough moves to make to square
+            // remove number of moves
+            console.log();
+            console.log('advance');
+            // player_positions.value[current_player_index] = 
+            return console.log(player_positions.value);
+        }
+        provide('advancePlayer', advancePlayer);
 
         onBeforeMount(() => {
             //initialize board properties
-            tiles[createCrashSite()].crash_site = true;
+            createCrashSite();
+            tiles[crash_site_index.value].crash_site = true;
             tiles[12].text = 'Vortex';
             //setup initial sand on board
             [2, 6, 8, 10, 14, 16, 18, 22].forEach(tile_number => addSandToTile(tiles[tile_number]));
         });
         return {
+
             current_player_index,
             game_creating,
             game_started,
@@ -198,6 +220,7 @@ export default {
             moveVortex,
             nextPlayerTurn,
             player_count,
+            setPlayersAtStart,
             tiles,
         }
     }
