@@ -6,6 +6,7 @@
     class="grid justify-items-center 
     hover:ring-1 hover:ring-purple-600
     text-sm
+    h-36 w-36
 
     p-7 rounded-md shadow-md"
     >
@@ -32,6 +33,7 @@
 
     <div v-if="is_vortex" class="grid justify-items-center 
     text-sm
+    h-36 w-36
     bg-opacity-0 
     p-7 rounded-md ">
         <div>
